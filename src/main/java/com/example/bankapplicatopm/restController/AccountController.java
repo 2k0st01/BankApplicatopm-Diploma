@@ -1,0 +1,34 @@
+package com.example.bankapplicatopm.restController;
+
+import com.example.bankapplicatopm.dto.AccountDTO;
+import com.example.bankapplicatopm.model.BankAccount;
+import com.example.bankapplicatopm.util.CurrentUser;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/account")
+@AllArgsConstructor
+public class AccountController {
+
+    @GetMapping("/data")
+    public AccountDTO getAccountData(){
+        BankAccount bankAccount = CurrentUser.getCurrentUser();
+        AccountDTO accountDTO = new AccountDTO();
+        if(bankAccount != null){
+            accountDTO.setEmail(bankAccount.getEmail());
+            accountDTO.setFirstName(bankAccount.getFirstName());
+            accountDTO.setIBAN(bankAccount.getIBAN());
+            accountDTO.setAddress(bankAccount.getAddress());
+            accountDTO.setSpecialName(bankAccount.getSpecialName());
+            accountDTO.setDateOfBirth(bankAccount.getDateOfBirth());
+            accountDTO.setLastName(bankAccount.getLastName());
+            accountDTO.setPhone(bankAccount.getPhone());
+            accountDTO.setAccountType(bankAccount.getAccountType());
+        }
+
+        return accountDTO;
+    }
+}
