@@ -1,96 +1,35 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html>
+<html lang="uk">
 <head>
+    <meta charset="UTF-8">
     <title>Project Bank Application</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-        }
-
-        div {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-            width: 300px;
-            margin: 50px auto;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(100% - 22px); /* Adjust width considering padding and border */
-        }
-
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        p {
-            color: #ff0000;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/register.css">
 </head>
 <body>
 <div align="center">
     <form id="registrationForm">
 
-        <label for="firstName">Name:</label><br>
+        <label for="firstName">Ім'я:</label><br>
         <input type="text" id="firstName" name="firstName" required><br>
 
-        <label for="lastName">Surname:</label><br>
+        <label for="lastName">Фамілія:</label><br>
         <input type="text" id="lastName" name="lastName" required><br>
 
-        <label for="email">Email:</label><br>
+        <label for="email">Пошта:</label><br>
         <input type="email" id="email" name="email" required><br>
 
-        <label for="password">Password:</label><br>
+        <label for="password">Пароль:</label><br>
         <input type="password" id="password" name="password" required><br>
 
-        <label for="phone">Phone:</label><br>
+        <label for="phone">Номер телефону:</label><br>
         <input type="text" id="phone" name="phone" required><br>
 
-        <label for="dateOfBirth">Date of Birth:</label><br>
+        <label for="dateOfBirth">Дата народження:</label><br>
         <input type="date" id="dateOfBirth" name="dateOfBirth" required><br>
 
-        <input type="button" onclick="submitForm()" value="Register">
+        <input type="button" onclick="submitForm()" value="Регестрація">
 
-        <p><a href="/login">Login</a></p>
+        <p><a href="/login">Логін</a></p>
     </form>
 </div>
 

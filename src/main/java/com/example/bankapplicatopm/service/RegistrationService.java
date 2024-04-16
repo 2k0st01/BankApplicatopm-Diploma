@@ -10,10 +10,7 @@ import com.example.bankapplicatopm.service.validator.EmailValidator;
 import com.example.bankapplicatopm.service.validator.PhoneValidator;
 import com.example.bankapplicatopm.util.EmailBuilder;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -27,6 +24,8 @@ public class RegistrationService {
     private final EmailConfirmationTokenService emailConfirmationTokenService;
     private final EmailSender emailSender;
 
+
+    @Transactional
     public BankAccount register(RegistrationRequestUserApplicationDTO request) {
         boolean isValidEmail = emailValidator.test(request.getEmail());
         boolean isValidPhone = phoneValidator.test(request.getPhone());
@@ -50,7 +49,7 @@ public class RegistrationService {
                 AccountType.STANDARD
         ));
         String link = "http://localhost:8080/api/registration/confirm?token=" + token;
-        emailSender.send(request.getEmail(), EmailBuilder.buildEmail(request.getFirstName(), link) );
+        emailSender.send(request.getEmail(), EmailBuilder.confirmYourEmail(request.getFirstName(), link) );
         return bankAccount;
     }
 
@@ -76,6 +75,7 @@ public class RegistrationService {
                 emailConfirmationToken.getBankAccount().getEmail());
         return "confirmed";
     }
+
 
 
 }
