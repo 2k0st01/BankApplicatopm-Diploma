@@ -1,7 +1,8 @@
 package com.example.bankapplicatopm.model;
 
-import com.example.bankapplicatopm.role.AccountType;
-import com.example.bankapplicatopm.role.UserRole;
+import com.example.bankapplicatopm.enums.AccountType;
+import com.example.bankapplicatopm.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 @Entity
 @Data
@@ -32,17 +32,17 @@ public class BankAccount implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AccountType accountType;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String firstName;
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String lastName;
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String email;
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String phone;
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private LocalDate dateOfBirth;
 
     private String address;
@@ -50,6 +50,11 @@ public class BankAccount implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
     private Boolean phoneValid = false;
+
+
+    @OneToMany(mappedBy = "account")
+    @JsonManagedReference
+    private Set<Wallet> wallets = new HashSet<>();;
 
     public BankAccount(String firstName,
                        String lastName,
@@ -67,6 +72,19 @@ public class BankAccount implements UserDetails {
         this.dateOfBirth = dateOfBirth;
         this.userRole = userRole;
         this.accountType = accountType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BankAccount that = (BankAccount) o;
+        return Objects.equals(id, that.id) && Objects.equals(IBAN, that.IBAN) && Objects.equals(specialName, that.specialName) && userRole == that.userRole && accountType == that.accountType && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(phone, that.phone) && Objects.equals(dateOfBirth, that.dateOfBirth) && Objects.equals(address, that.address) && Objects.equals(locked, that.locked) && Objects.equals(enabled, that.enabled) && Objects.equals(phoneValid, that.phoneValid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, IBAN, specialName, userRole, accountType, firstName, lastName, email, password, phone, dateOfBirth, address, locked, enabled, phoneValid);
     }
 
     @Override

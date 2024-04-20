@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .wallets {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .wallets span {
+            margin-right: 20px;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .page-link {
+            margin: 0 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            color: #333;
+            text-decoration: none;
+        }
+        .page-link:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Admin Panel - User Accounts</h2>
+    <table id="usersTable">
+        <thead>
+        <tr>
+            <th>Username (Email)</th>
+            <th>IBAN</th>
+            <th>Wallet Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <span class="page-link" onclick="changePage(currentPage - 1)">Previous</span>
+        <span class="page-link" onclick="changePage(currentPage + 1)">Next</span>
+    </div>
+</div>
+<div class="container">
+    <form id="transactionForm">
+        <label for="sum">Sum:</label><br>
+        <input type="text" id="sum" name="sum" required><br>
+
+        <input type="hidden" id="comment" name="comment" value="FROM ADMIN" required><br>
+
+        <label for="toAccount">IBAN:</label><br>
+        <input type="email" id="toAccount" name="toAccount" required><br>
+
+        <label for="currency">Choose a currency:</label>
+        <select id="currency" name="currency">
+            <option value="USD">USD - US Dollar</option>
+            <option value="EUR">EUR - Euro</option>
+            <option value="UAH">UAH - Ukrainian GRN</option>
+            <option value="GBP">GBP - British Pound</option>
+            <option value="AUD">AUD - Australian Dollar</option>
+            <option value="CAD">CAD - Canadian Dollar</option>
+            <option value="CHF">CHF - Swiss Franc</option>
+            <option value="CNY">CNY - Chinese Renminbi</option>
+            <option value="SEK">SEK - Swedish Krona</option>
+            <option value="NZD">NZD - New Zealand Dollar</option>
+        </select>
+        <input type="button" onclick="submitForm()" value="Send money">
+    </form>
+</div>
+
+<script>
+    function submitForm() {
+        const form = document.getElementById('transactionForm');
+        const formData = {
+            sum: form.sum.value,
+            comment: form.comment.value,
+            toAccount: form.toAccount.value,
+            currency: form.currency.value,
+        };
+
+        fetch('/transaction/sendFromAdmin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Check your data');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log('Success:', data.message);
+                    alert('Transaction successful!');
+                    window.location.href = '/panel';
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error in transaction: ' + error.message);
+            });
+    }
+
+    let currentPage = 0;
+    let totalPages = 0;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadUsers(currentPage);
+    });
+
+    function loadUsers(page) {
+        fetch(`/panel/getUsers?page=${page}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add your authorization header if needed
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                currentPage = data.pageable.pageNumber;
+                totalPages = data.totalPages;
+                const table = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
+                table.innerHTML = ''; // Clear previous rows
+                data.content.forEach(user => {
+                    let row = table.insertRow();
+                    let cell1 = row.insertCell(0);
+                    cell1.textContent = user.userName;
+                    let cell2 = row.insertCell(1);
+                    cell2.textContent = user.iban;
+                    let cell3 = row.insertCell(2);
+                    let wallets = document.createElement('div');
+                    wallets.className = 'wallets';
+                    user.walletDTO.forEach(wallet => {
+                        let span = document.createElement('span');
+                        span.textContent = `${wallet.currency || 'N/A'}: ${wallet.sum || '0'}`;
+                        wallets.appendChild(span);
+                    });
+                    cell3.appendChild(wallets);
+                });
+            })
+            .catch(error => console.error('Error loading the users:', error));
+    }
+
+    function changePage(page) {
+        if (page < 0 || page >= totalPages) return;
+        loadUsers(page);
+    }
+</script>
+</body>
+</html>

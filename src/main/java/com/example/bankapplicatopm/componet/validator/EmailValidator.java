@@ -1,12 +1,13 @@
-package com.example.bankapplicatopm.service.validator;
+package com.example.bankapplicatopm.componet.validator;
 
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-@Service
+@Component
 public class EmailValidator implements Predicate<String> {
 
     private static final String EMAIL_PATTERN =

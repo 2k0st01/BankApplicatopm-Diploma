@@ -1,12 +1,15 @@
 package com.example.bankapplicatopm.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+
 @org.springframework.stereotype.Controller
-public class Controller {
+public class MainController {
 
     @GetMapping("/account")
     public String getAccountPage(){
@@ -21,12 +24,12 @@ public class Controller {
         return "login/index";
     }
 
-    @GetMapping("/register")
+    @GetMapping("/registration")
     public String getRegisterPage(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             return "redirect:/";
         }
-        return "register/index";
+        return "registration/index";
     }
 
     @GetMapping("/forgot-password")
@@ -41,5 +44,40 @@ public class Controller {
     public String getPageForChangeForgotPassword(@RequestParam("token") String token){
 
         return "forgot-password/change-password/index";
+    }
+
+    @GetMapping("/wallet")
+    public String getWalletPage(){
+        return "wallet/index";
+    }
+
+    @GetMapping("/transaction")
+    public String getTransactionPage(){
+        return "transaction/index";
+    }
+
+    @GetMapping("/transaction/my")
+    public String getMyTransactionPage(){
+        return "transaction/my/index";
+    }
+
+    @GetMapping("/panel")
+    public String getAdminPanelPage() {
+        return "panel/index";
+    }
+
+    @GetMapping("/jar")
+    public String getJarPage() {
+        return "jar/index";
+    }
+
+    @GetMapping("/jar/add")
+    public String getJarShowPage() {
+        return "jar/add/index";
+    }
+
+    @GetMapping("/jar/create")
+    public String getJarCreatePage() {
+        return "jar/create/index";
     }
 }

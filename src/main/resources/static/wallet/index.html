@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Wallet</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    form {
+      margin: 20px 0;
+    }
+    label {
+      margin-right: 10px;
+    }
+    select, button {
+      padding: 10px;
+      margin-right: 20px;
+      margin-top: 20px;
+    }
+    .message {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+<h1>Create New Wallet</h1>
+<form id="walletForm">
+  <label for="currency">Choose a currency:</label>
+  <select id="currency" name="currency">
+    <option value="USD">USD - US Dollar</option>
+    <option value="EUR">EUR - Euro</option>
+    <option value="UAH">UAH - Ukrainian GRN</option>
+    <option value="GBP">GBP - British Pound</option>
+    <option value="AUD">AUD - Australian Dollar</option>
+    <option value="CAD">CAD - Canadian Dollar</option>
+    <option value="CHF">CHF - Swiss Franc</option>
+    <option value="CNY">CNY - Chinese Renminbi</option>
+    <option value="SEK">SEK - Swedish Krona</option>
+    <option value="NZD">NZD - New Zealand Dollar</option>
+  </select>
+  <button type="submit">Create Wallet</button>
+</form>
+<div class="message" id="messageBox"></div>
+
+<script>
+  document.getElementById('walletForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    var currency = document.getElementById('currency').value;
+    var requestData = new URLSearchParams();
+    requestData.append('currency', currency);
+
+    fetch('http://localhost:8080/wallet', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: requestData
+    }).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      var messageBox = document.getElementById('messageBox');
+      if (data.success) {
+        messageBox.className = 'message success';
+        messageBox.textContent = 'Wallet created: ' + data.message;
+      } else {
+        messageBox.className = 'message error';
+        messageBox.textContent = 'Error: ' + data.message;
+      }
+    }).catch(function(error) {
+      document.getElementById('messageBox').className = 'message error';
+      document.getElementById('messageBox').textContent = 'Network or server error';
+    });
+  });
+</script>
+</body>
+</html>

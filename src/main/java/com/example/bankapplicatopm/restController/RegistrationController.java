@@ -1,6 +1,6 @@
 package com.example.bankapplicatopm.restController;
 
-import com.example.bankapplicatopm.dto.RegistrationRequestUserApplicationDTO;
+import com.example.bankapplicatopm.dto.account.RegistrationRequestUserApplicationDTO;
 import com.example.bankapplicatopm.model.BankAccount;
 import com.example.bankapplicatopm.service.RegistrationService;
 import com.example.bankapplicatopm.util.ApiResponse;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/registration")
+@RequestMapping("/registration")
 @AllArgsConstructor
 public class RegistrationController {
 

@@ -1,4 +1,6 @@
 function submitForm() {
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+    console.log(csrfToken);
     const form = document.getElementById('registrationForm');
     const formData = {
         firstName: form.firstName.value,
@@ -9,10 +11,11 @@ function submitForm() {
         dateOfBirth: form.dateOfBirth.value
     };
 
-    fetch('/api/registration', {
+    fetch('/registration', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': csrfToken
         },
         body: JSON.stringify(formData)
     })

@@ -1,6 +1,6 @@
 package com.example.bankapplicatopm.restController;
 
-import com.example.bankapplicatopm.dto.AccountDTO;
+import com.example.bankapplicatopm.dto.account.AccountDTO;
 import com.example.bankapplicatopm.model.BankAccount;
 import com.example.bankapplicatopm.util.CurrentUser;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/account")
 @AllArgsConstructor
 public class AccountController {
 
@@ -27,8 +27,8 @@ public class AccountController {
             accountDTO.setLastName(bankAccount.getLastName());
             accountDTO.setPhone(bankAccount.getPhone());
             accountDTO.setAccountType(bankAccount.getAccountType());
+            accountDTO.setUserRole(bankAccount.getUserRole());
         }
-
         return accountDTO;
     }
 }

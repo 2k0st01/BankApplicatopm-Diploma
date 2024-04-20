@@ -7,6 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
     $(document).ready(function() {
+      const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
       $('form').on('submit', function(e) {
         e.preventDefault(); // Запобігаємо стандартній поведінці форми
 
@@ -14,6 +15,10 @@
         $.ajax({
           url: '/forgot-password', // переконайтеся, що URL вірний
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': csrfToken
+          },
           contentType: 'application/json', // Важливо вказати, що ви відправляєте JSON
           data: JSON.stringify({ email: email }),
           success: function(response) {

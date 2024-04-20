@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/account/data')
+    fetch('/account/data')
         .then(response => response.json())
         .then(data => {
             document.getElementById('firstName').textContent = data.firstName;

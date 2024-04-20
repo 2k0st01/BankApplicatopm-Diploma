@@ -1,11 +1,12 @@
-package com.example.bankapplicatopm.service.validator;
+package com.example.bankapplicatopm.componet.validator;
 
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-@Service
+@Component
 public class PhoneValidator implements Predicate<String> {
 
     private static final String PHONE_PATTERN = "^(50|66|95|99|63|93|67|96|97|98|68|39|91|92|94|89)[0-9]{7}$";

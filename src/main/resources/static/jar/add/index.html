@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add to Jar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      width: 300px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Add Money to Jar</h1>
+  <form id="addJarForm">
+    <label for="jarId">Jar ID:</label>
+    <input type="text" id="jarId" name="jarId" required><br>
+
+    <label for="sum">Amount:</label>
+    <input type="number" id="sum" name="sum" step="0.01" required><br>
+
+    <label for="jarCurrency">Currency:</label>
+    <input type="text" id="jarCurrency" name="jarCurrency" required><br>
+
+    <label for="comment">Comment:</label>
+    <input type="text" id="comment" name="comment"><br>
+
+    <button type="submit">Add Money</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('addJarForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = {
+      jarId: document.getElementById('jarId').value,
+      sum: parseFloat(document.getElementById('sum').value),
+      jarCurrency: document.getElementById('jarCurrency').value,
+      comment: document.getElementById('comment').value,
+    };
+
+    fetch('/jar/add', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'  // Важливо встановити правильний Content-Type
+      },
+      body: JSON.stringify({
+        jarId: document.getElementById('jarId').value,
+        sum: parseFloat(document.getElementById('sum').value),
+        jarCurrency: document.getElementById('jarCurrency').value,
+        comment: document.getElementById('comment').value,
+      })
+    })
+            .then(response => {
+              if (response.ok) {
+                return response.json(); // Якщо ви очікуєте JSON відповідь
+              } else {
+                throw new Error('Something went wrong');
+              }
+            })
+            .then(data => alert('Money added successfully!'))
+            .catch(error => alert('Error adding money: ' + error.message));
+
+  });
+
+</script>
+</body>
+</html>

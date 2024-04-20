@@ -1,13 +1,13 @@
 package com.example.bankapplicatopm.service;
 
-import com.example.bankapplicatopm.dto.RegistrationRequestUserApplicationDTO;
+import com.example.bankapplicatopm.dto.account.RegistrationRequestUserApplicationDTO;
 import com.example.bankapplicatopm.emailSender.EmailSender;
 import com.example.bankapplicatopm.model.BankAccount;
 import com.example.bankapplicatopm.model.token.EmailConfirmationToken;
-import com.example.bankapplicatopm.role.AccountType;
-import com.example.bankapplicatopm.role.UserRole;
-import com.example.bankapplicatopm.service.validator.EmailValidator;
-import com.example.bankapplicatopm.service.validator.PhoneValidator;
+import com.example.bankapplicatopm.enums.AccountType;
+import com.example.bankapplicatopm.enums.UserRole;
+import com.example.bankapplicatopm.componet.validator.EmailValidator;
+import com.example.bankapplicatopm.componet.validator.PhoneValidator;
 import com.example.bankapplicatopm.util.EmailBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 public class RegistrationService {
     private final EmailValidator emailValidator;
     private final PhoneValidator phoneValidator;
-    private final UserAccountService userAccountService;
+    private final BankAccountService bankAccountService;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
     private final EmailSender emailSender;
 
@@ -38,17 +38,17 @@ public class RegistrationService {
         }
 
         BankAccount bankAccount;
-        String token = userAccountService.singUpUser(bankAccount = new BankAccount(
+        String token = bankAccountService.singUpUser(bankAccount = new BankAccount(
                 request.getFirstName(),
                 request.getLastName(),
                 request.getEmail(),
                 request.getPassword(),
                 mobilePhone,
                 request.getDateOfBirth(),
-                UserRole.USER,
+                UserRole.ROLE_USER,
                 AccountType.STANDARD
         ));
-        String link = "http://localhost:8080/api/registration/confirm?token=" + token;
+        String link = "http://localhost:8080/registration/confirm?token=" + token;
         emailSender.send(request.getEmail(), EmailBuilder.confirmYourEmail(request.getFirstName(), link) );
         return bankAccount;
     }
@@ -71,7 +71,7 @@ public class RegistrationService {
         }
 
         emailConfirmationTokenService.setConfirmedAt(token);
-        userAccountService.enableAppUser(
+        bankAccountService.enableAppUser(
                 emailConfirmationToken.getBankAccount().getEmail());
         return "confirmed";
     }

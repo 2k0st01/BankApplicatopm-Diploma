@@ -7,23 +7,42 @@
 </head>
 <body>
 <div class="login-container">
-  <form action="/login" method="post">
-    <h2>Вход в систему</h2>
-    <div class="input-group">
-      <label for="username">Email пользователя:</label>
-      <input type="email" id="username" name="username" placeholder="email@example.com">
-    </div>
-    <div class="input-group">
-      <label for="password">Пароль:</label>
-      <input type="password" id="password" name="password" placeholder="Password">
-    </div>
-    <button type="submit" class="login-btn">Войти</button>
-    <div class="links">
-      <a href="/register">Регистрация</a>
-      <a href="/forgot-password">Забыли пароль?</a>
-    </div>
-  </form>
+    <form id="loginForm" method="post" action="/login" onsubmit="submitForm()">
+        <h2>Вход в систему</h2>
+        <div class="input-group">
+            <label for="username">Email пользователя:</label>
+            <input type="email" id="username" name="username" placeholder="email@example.com">
+        </div>
+        <div class="input-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" placeholder="Password">
+        </div>
+        <button type="submit" class="login-btn">Войти</button>
+        <div class="links">
+            <a href="/registration">Регистрация</a>
+            <a href="/forgot-password">Забыли пароль?</a>
+        </div>
+    </form>
 </div>
 
+<script>
+    function submitForm() {
+        const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+        console.log(csrfToken);
+        const form = document.getElementById('loginForm');
+        const formDataObj = new FormData();
+
+        formDataObj.append('username', form.username.value)
+        formDataObj.append('password', form.password.value)
+
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+                'X-XSRF-TOKEN': csrfToken
+            },
+            body: formDataObj
+        }).then(window.location.href = '/account')
+    }
+</script>
 </body>
 </html>

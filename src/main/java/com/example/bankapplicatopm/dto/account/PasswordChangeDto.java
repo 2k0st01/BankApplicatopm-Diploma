@@ -1,4 +1,4 @@
-package com.example.bankapplicatopm.dto;
+package com.example.bankapplicatopm.dto.account;
 
 
 import lombok.Data;

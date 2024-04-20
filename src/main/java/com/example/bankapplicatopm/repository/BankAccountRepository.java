@@ -7,17 +7,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public interface UserAccountRepository extends JpaRepository<BankAccount, Long> {
+public interface BankAccountRepository extends JpaRepository<BankAccount, Long> {
 
     Optional<BankAccount> findUserAccountByEmail(String email);
 
     BankAccount findByEmail(String email);
 
     BankAccount getUserAccountByEmail(String email);
+
+    BankAccount findBankAccountByIBAN(String iban);
+
+    BankAccount findBankAccountById(Long id);
 
     @Transactional
     @Modifying

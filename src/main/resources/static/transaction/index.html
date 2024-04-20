@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send Transaction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    form {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    input, button {
+      margin-top: 10px;
+      padding: 10px;
+      width: 300px;
+      display: block;
+    }
+    button {
+      width: 312px;
+      cursor: pointer;
+    }
+    .response {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+      display: none;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+<h2>Send Transaction</h2>
+<form id="transactionForm">
+  <label for="sum">Sum:</label><br>
+  <input type="text" id="sum" name="sum" required><br>
+
+  <label for="comment">Comment:</label><br>
+  <input type="text" id="comment" name="comment" required><br>
+
+  <label for="toAccount">IBAN:</label><br>
+  <input type="email" id="toAccount" name="toAccount" required><br>
+
+  <label for="currency">Choose a currency:</label>
+  <select id="currency" name="currency">
+    <option value="USD">USD - US Dollar</option>
+    <option value="EUR">EUR - Euro</option>
+    <option value="UAH">UAH - Ukrainian GRN</option>
+    <option value="GBP">GBP - British Pound</option>
+    <option value="AUD">AUD - Australian Dollar</option>
+    <option value="CAD">CAD - Canadian Dollar</option>
+    <option value="CHF">CHF - Swiss Franc</option>
+    <option value="CNY">CNY - Chinese Renminbi</option>
+    <option value="SEK">SEK - Swedish Krona</option>
+    <option value="NZD">NZD - New Zealand Dollar</option>
+  </select>
+  <input type="button" onclick="submitForm()" value="Send money">
+</form>
+<div class="response" id="response"></div>
+
+<script src="/js/transaction.js">
+</script>
+</body>
+</html>
