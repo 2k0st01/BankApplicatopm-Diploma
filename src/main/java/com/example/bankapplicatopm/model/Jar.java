@@ -1,9 +1,9 @@
 package com.example.bankapplicatopm.model;
 
+import javax.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -13,7 +13,8 @@ import java.util.List;
 public class Jar {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "jar_seq_gen")
+    @SequenceGenerator(name = "jar_seq_gen", sequenceName = "jar_seq", allocationSize = 1)
     private Long id;
 
     private boolean bankStatus = false;

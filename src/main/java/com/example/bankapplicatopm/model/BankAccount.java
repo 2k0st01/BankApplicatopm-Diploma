@@ -3,6 +3,7 @@ package com.example.bankapplicatopm.model;
 import com.example.bankapplicatopm.enums.AccountType;
 import com.example.bankapplicatopm.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -21,8 +22,8 @@ import java.util.*;
 public class BankAccount implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "entity_seq_gen")
-    @SequenceGenerator(name = "entity_seq_gen", sequenceName = "entity_seq", initialValue = 10000000, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_account_seq_gen")
+    @SequenceGenerator(name = "bank_account_seq", sequenceName = "bank_account_seq", initialValue = 10000000, allocationSize = 1)
     private Long id;
     private String IBAN;
     private String specialName;
@@ -54,7 +55,7 @@ public class BankAccount implements UserDetails {
 
     @OneToMany(mappedBy = "account")
     @JsonManagedReference
-    private Set<Wallet> wallets = new HashSet<>();;
+    private List<Wallet> wallets = new ArrayList<>();
 
     public BankAccount(String firstName,
                        String lastName,

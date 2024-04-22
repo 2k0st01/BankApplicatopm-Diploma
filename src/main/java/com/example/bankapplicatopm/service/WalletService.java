@@ -1,6 +1,7 @@
 package com.example.bankapplicatopm.service;
 
 import com.example.bankapplicatopm.dto.wallet.WalletDTO;
+import com.example.bankapplicatopm.enums.Currency;
 import com.example.bankapplicatopm.model.BankAccount;
 import com.example.bankapplicatopm.model.Wallet;
 import com.example.bankapplicatopm.repository.WalletRepository;
@@ -48,28 +49,37 @@ public class WalletService {
 
     @Transactional
     public Wallet createWallet(String currency) {
-        BankAccount bankAccount = CurrentUser.getCurrentUser();
-        for (Wallet w : walletRepository.findWalletByAccount(bankAccount)) {
-            if (w.getCurrency().equals(currency)) {
-                throw new IllegalStateException("You already have this currency: " + currency);
+        for(Currency c : Currency.values()){
+            if(c.toString().equals(currency)){
+                BankAccount bankAccount = CurrentUser.getCurrentUser();
+                for (Wallet w : walletRepository.findWalletByAccount(bankAccount)) {
+                    if (w.getCurrency().equals(currency)) {
+                        throw new IllegalStateException("You already have this currency: " + currency);
+                    }
+                }
+                Wallet wallet = new Wallet();
+                wallet.setCurrency(currency);
+                wallet.setAccount(bankAccount);
+                wallet.setCurrency(currency);
+                return walletRepository.save(wallet);
             }
         }
-        Wallet wallet = new Wallet();
-        wallet.setCurrency(currency);
-        wallet.setAccount(bankAccount);
-        wallet.setCurrency(currency);
-        return walletRepository.save(wallet);
+        throw new IllegalStateException("We can't create for you wallet account like this: " + currency);
     }
 
     @Transactional
     public Wallet createWalletForSendBankAccount(Long id, String currency){
-        BankAccount bankAccount = bankAccountService.findBankAccountById(id);
-        Wallet wallet = new Wallet();
-        wallet.setAccount(bankAccount);
-        wallet.setCurrency(currency);
-        return walletRepository.save(wallet);
+        for(Currency c : Currency.values()){
+            if(c.toString().equals(currency)){
+                BankAccount bankAccount = bankAccountService.findBankAccountById(id);
+                Wallet wallet = new Wallet();
+                wallet.setAccount(bankAccount);
+                wallet.setCurrency(currency);
+                return walletRepository.save(wallet);
+            }
+        }
+        throw new IllegalStateException("We can't create for you wallet account like this: " + currency);
     }
-
 
     @Transactional
     public Wallet createBaseWallet(BankAccount account, String currency) {

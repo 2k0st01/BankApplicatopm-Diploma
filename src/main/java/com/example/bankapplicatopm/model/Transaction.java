@@ -1,9 +1,9 @@
 package com.example.bankapplicatopm.model;
 
+import javax.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.time.LocalDate;
@@ -16,7 +16,8 @@ import java.util.List;
 public class Transaction {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_seq_gen")
+    @SequenceGenerator(name = "transaction_seq_gen", sequenceName = "transaction_seq", allocationSize = 1)
     private Long id;
 
     private String toAccount;

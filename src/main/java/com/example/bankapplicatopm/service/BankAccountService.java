@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -192,8 +193,8 @@ public class BankAccountService implements UserDetailsService {
     }
 
     @Transactional
-    public BankAccount getUserAccountByEmail(String email) {
-        return bankAccountRepository.getUserAccountByEmail(email);
+    public Optional<BankAccount> findUserAccountByEmail(String email) {
+        return bankAccountRepository.findUserAccountByEmail(email);
     }
 
     @Transactional

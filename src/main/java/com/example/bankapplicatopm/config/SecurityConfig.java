@@ -30,13 +30,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                    .authorizeRequests()
+                .authorizeHttpRequests()
                     .antMatchers("/registration/**",
                             "/login",
                             "/registration",
                             "/forgot-password",
                             "/change-password",
-                            "/"
+                            "/",
+                            "/api/currency/rate"
                     ).permitAll()
                     .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
                     .antMatchers("/panel", "/panel/getUsers").hasRole("ADMIN")

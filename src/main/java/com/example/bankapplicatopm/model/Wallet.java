@@ -2,7 +2,9 @@ package com.example.bankapplicatopm.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
+
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -11,11 +13,11 @@ import java.util.Objects;
 
 @Entity
 @Data
-
 public class Wallet {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wallet_seq_gen")
+    @SequenceGenerator(name = "wallet_seq_gen", sequenceName = "wallet_seq", allocationSize = 1)
     private long id;
 
     private String currency;

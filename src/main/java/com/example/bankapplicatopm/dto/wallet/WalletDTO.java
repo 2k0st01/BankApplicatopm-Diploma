@@ -10,7 +10,4 @@ import java.math.BigDecimal;
 public class WalletDTO {
     private String currency;
     private BigDecimal sum;
-
-    public WalletDTO(String currency, BigDecimal sum) {
-    }
 }

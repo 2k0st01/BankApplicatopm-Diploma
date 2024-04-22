@@ -1,10 +1,10 @@
 package com.example.bankapplicatopm.model.token;
 
 import com.example.bankapplicatopm.model.BankAccount;
+import javax.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data

@@ -11,8 +11,8 @@ import com.example.bankapplicatopm.componet.validator.PhoneValidator;
 import com.example.bankapplicatopm.util.EmailBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 @Service
