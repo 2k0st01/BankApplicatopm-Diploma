@@ -48,7 +48,7 @@ public class RegistrationService {
                 UserRole.ROLE_USER,
                 AccountType.STANDARD
         ));
-        String link = "http://localhost:8080/registration/confirm?token=" + token;
+        String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/confirm?token=" + token;
         emailSender.send(request.getEmail(), EmailBuilder.confirmYourEmail(request.getFirstName(), link) );
         return bankAccount;
     }

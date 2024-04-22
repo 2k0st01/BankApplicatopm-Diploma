@@ -1,0 +1,19 @@
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=true
+
+spring.mvc.view.prefix=/
+spring.mvc.view.suffix=.html
+
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.hibernate.ddl-auto=create-drop
+
+server.port=${PORT:8080}
+
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=no.reply.test.kosto@gmail.com
+spring.mail.password=xfhr asfn hmhr yeyz
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true

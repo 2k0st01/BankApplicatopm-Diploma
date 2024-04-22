@@ -22,7 +22,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: 'http://localhost:8080/change-password?token=' + token,
+            url: '/change-password?token=' + token,
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({

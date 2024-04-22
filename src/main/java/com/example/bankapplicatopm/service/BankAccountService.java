@@ -64,7 +64,7 @@ public class BankAccountService implements UserDetailsService {
             BankAccount account = bankAccountRepository.getUserAccountByEmail(bankAccount.getEmail());
             if (!account.isEnabled()) {
                 EmailConfirmationToken emailConfirmationToken = emailConfirmationTokenService.findConfirmationTokenByUserAccount(account);
-                String link = "http://localhost:8080/registration/confirm?token=";
+                String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/confirm?token=";
                 if (emailConfirmationToken == null) {
                     String token = creatConfirmToken(account);
                     emailSender.send(account.getEmail(), EmailBuilder.confirmYourEmail(account.getFirstName(), link + token));
@@ -128,7 +128,7 @@ public class BankAccountService implements UserDetailsService {
 
     @Transactional
     public BankAccount forgotPassword(String email) {
-        String link = "http://localhost:8080/change-password?token=";
+        String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/change-password?token=";
         BankAccount bankAccount = bankAccountRepository.findByEmail(email);
         if (bankAccount != null) {
             String token = creatChangeForgotPasswordToken(bankAccount);
