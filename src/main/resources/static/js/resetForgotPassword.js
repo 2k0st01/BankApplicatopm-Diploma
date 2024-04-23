@@ -1,5 +1,6 @@
 $(document).ready(function() {
     // Отримання токена з URL
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
 
@@ -24,6 +25,10 @@ $(document).ready(function() {
         $.ajax({
             url: '/change-password?token=' + token,
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': csrfToken
+            },
             contentType: 'application/json',
             data: JSON.stringify({
                 newPassword: newPassword,

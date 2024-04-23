@@ -70,7 +70,7 @@
 <script>
   document.getElementById('addJarForm').addEventListener('submit', function(event) {
     event.preventDefault();
-
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
     const formData = {
       jarId: document.getElementById('jarId').value,
       sum: parseFloat(document.getElementById('sum').value),
@@ -81,7 +81,8 @@
     fetch('/jar/add', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'  // Важливо встановити правильний Content-Type
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': csrfToken
       },
       body: JSON.stringify({
         jarId: document.getElementById('jarId').value,

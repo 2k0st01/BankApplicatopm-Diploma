@@ -64,7 +64,7 @@ public class BankAccountService implements UserDetailsService {
             BankAccount account = bankAccountRepository.getUserAccountByEmail(bankAccount.getEmail());
             if (!account.isEnabled()) {
                 EmailConfirmationToken emailConfirmationToken = emailConfirmationTokenService.findConfirmationTokenByUserAccount(account);
-                String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/confirm?token=";
+                String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/registration/confirm?token=";
                 if (emailConfirmationToken == null) {
                     String token = creatConfirmToken(account);
                     emailSender.send(account.getEmail(), EmailBuilder.confirmYourEmail(account.getFirstName(), link + token));

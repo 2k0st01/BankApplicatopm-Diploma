@@ -108,6 +108,7 @@
 <script>
     function submitForm() {
         const form = document.getElementById('transactionForm');
+        const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
         const formData = {
             sum: form.sum.value,
             comment: form.comment.value,
@@ -118,7 +119,8 @@
         fetch('/transaction/sendFromAdmin', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': csrfToken
             },
             body: JSON.stringify(formData)
         })
@@ -155,7 +157,7 @@
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                // Add your authorization header if needed
+
             }
         })
             .then(response => response.json())

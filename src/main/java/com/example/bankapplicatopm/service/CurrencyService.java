@@ -5,7 +5,6 @@ import com.example.bankapplicatopm.model.CurrencyModel;
 import com.example.bankapplicatopm.model.Wallet;
 import com.example.bankapplicatopm.repository.CurrencyRepository;
 import com.example.bankapplicatopm.util.CurrentUser;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +36,10 @@ public class CurrencyService {
 
     @Transactional
     public void changeCurrency(String from, String to, BigDecimal sum) {
+        if(from.equals(to)){
+            throw new IllegalStateException("You true use same wallets: " + from);
+        }
+
         BankAccount bankAccount = CurrentUser.getCurrentUser();
         Wallet walletFrom = walletService.findWalletByAccountIdAndCurrency(bankAccount.getId(), from);
         Wallet walletTo = walletService.findWalletByAccountIdAndCurrency(bankAccount.getId(), to);
@@ -60,29 +63,25 @@ public class CurrencyService {
             throw new IllegalStateException("Some think wrong");
         }
 
-        doTransaction(walletFrom,walletTo,findFrom,findTo,sum);
+        performTransaction(walletFrom,walletTo,findFrom,findTo,sum);
     }
 
-    private void doTransaction(Wallet from, Wallet to, CurrencyModel findFrom, CurrencyModel findTo, BigDecimal sum) {
-        if (findFrom == null && from.getCurrency().equals("UAH") && !to.getCurrency().equals("UAH")) {
-            from.setSum(from.getSum().subtract(sum));
-            sum = sum.divide(findTo.getRate(), 2, RoundingMode.HALF_EVEN);
-            to.setSum(to.getSum().add(sum));
-            walletService.save(from);
-            walletService.save(to);
-        } else if (findTo == null && to.getCurrency().equals("UAH") && !from.getCurrency().equals("UAH")) {
-            from.setSum(from.getSum().subtract(sum));
-            to.setSum(to.getSum().add(findFrom.getRate().multiply(sum)));
-            walletService.save(from);
-            walletService.save(to);
+    private void performTransaction(Wallet from, Wallet to, CurrencyModel currencyFrom, CurrencyModel currencyTo, BigDecimal amount) {
+        BigDecimal amountToTransfer = calculateAmount(currencyFrom, currencyTo, amount);
+        from.setSum(from.getSum().subtract(amount));
+        to.setSum(to.getSum().add(amountToTransfer));
+        walletService.save(from);
+        walletService.save(to);
+    }
+
+    private BigDecimal calculateAmount(CurrencyModel from, CurrencyModel to, BigDecimal amount) {
+        if (from == null && !to.getCc().equals("UAH")) {
+            return amount.divide(to.getRate(), 2, RoundingMode.HALF_EVEN);
+        } else if (to == null && !from.getCc().equals("UAH")) {
+            return from.getRate().multiply(amount);
         } else {
-            BigDecimal sumToUAH = new BigDecimal("0").add(findFrom.getRate().multiply(sum));
-            from.setSum(from.getSum().subtract(sum));
-            sumToUAH = sumToUAH.divide(findTo.getRate(), 2, RoundingMode.HALF_EVEN);
-            to.setSum(to.getSum().add(sumToUAH));
-            walletService.save(from);
-            walletService.save(to);
+            BigDecimal amountToUAH = from.getRate().multiply(amount);
+            return amountToUAH.divide(to.getRate(), 2, RoundingMode.HALF_EVEN);
         }
     }
-
 }

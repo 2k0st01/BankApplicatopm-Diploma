@@ -71,6 +71,8 @@
   document.getElementById('createJarForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
+
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
     const formData = {
       jarName: document.getElementById('jarName').value,
       maxSize: parseFloat(document.getElementById('maxSize').value),
@@ -81,7 +83,8 @@
     fetch('/jar/create', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': csrfToken
       },
       body: JSON.stringify(formData)
     })

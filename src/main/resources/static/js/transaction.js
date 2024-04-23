@@ -1,5 +1,6 @@
 function submitForm() {
     const form = document.getElementById('transactionForm');
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
     const formData = {
         sum: form.sum.value,
         comment: form.comment.value,
@@ -10,7 +11,8 @@ function submitForm() {
     fetch('/transaction/send', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': csrfToken
         },
         body: JSON.stringify(formData)
     })

@@ -80,11 +80,13 @@
 <script>
   document.getElementById('currencyForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
 
     fetch('/api/currency/change', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-XSRF-TOKEN': csrfToken
       },
       body: JSON.stringify({
         from: document.getElementById('from').value,

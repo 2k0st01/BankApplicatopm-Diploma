@@ -56,12 +56,14 @@
     event.preventDefault();
     var currency = document.getElementById('currency').value;
     var requestData = new URLSearchParams();
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
     requestData.append('currency', currency);
 
     fetch('/wallet', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-XSRF-TOKEN': csrfToken
       },
       body: requestData
     }).then(function(response) {
