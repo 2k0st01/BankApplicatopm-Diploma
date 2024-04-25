@@ -1,6 +1,5 @@
 package com.example.bankapplicatopm.model;
 
-import com.example.bankapplicatopm.enums.AccountType;
 import com.example.bankapplicatopm.enums.UserRole;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
@@ -18,20 +17,17 @@ import java.util.*;
 @Entity
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode
 public class BankAccount implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_account_seq_gen")
-    @SequenceGenerator(name = "bank_account_seq", sequenceName = "bank_account_seq", initialValue = 10000000, allocationSize = 1)
+    @SequenceGenerator(name = "bank_account_seq_gen", sequenceName = "bank_account_seq", initialValue = 10000000, allocationSize = 1    )
     private Long id;
     private String IBAN;
     private String specialName;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
-    @Enumerated(EnumType.STRING)
-    private AccountType accountType;
 
 //    @Column(nullable = false)
     private String firstName;
@@ -50,7 +46,9 @@ public class BankAccount implements UserDetails {
 
     private Boolean locked = false;
     private Boolean enabled = false;
-    private Boolean phoneValid = false;
+//    private Boolean phoneValid = false;
+//    private boolean mFaEnabled = false;
+//    private String secret;
 
 
     @OneToMany(mappedBy = "account")
@@ -63,8 +61,7 @@ public class BankAccount implements UserDetails {
                        String password,
                        String phone,
                        LocalDate dateOfBirth,
-                       UserRole userRole,
-                       AccountType accountType) {
+                       UserRole userRole) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -72,7 +69,6 @@ public class BankAccount implements UserDetails {
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
         this.userRole = userRole;
-        this.accountType = accountType;
     }
 
     @Override
@@ -80,12 +76,12 @@ public class BankAccount implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BankAccount that = (BankAccount) o;
-        return Objects.equals(id, that.id) && Objects.equals(IBAN, that.IBAN) && Objects.equals(specialName, that.specialName) && userRole == that.userRole && accountType == that.accountType && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(phone, that.phone) && Objects.equals(dateOfBirth, that.dateOfBirth) && Objects.equals(address, that.address) && Objects.equals(locked, that.locked) && Objects.equals(enabled, that.enabled) && Objects.equals(phoneValid, that.phoneValid);
+        return Objects.equals(id, that.id) && Objects.equals(IBAN, that.IBAN) && Objects.equals(specialName, that.specialName) && userRole == that.userRole && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(password, that.password) && Objects.equals(phone, that.phone) && Objects.equals(dateOfBirth, that.dateOfBirth) && Objects.equals(address, that.address) && Objects.equals(locked, that.locked) && Objects.equals(enabled, that.enabled);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, IBAN, specialName, userRole, accountType, firstName, lastName, email, password, phone, dateOfBirth, address, locked, enabled, phoneValid);
+        return Objects.hash(id, IBAN, specialName, userRole, firstName, lastName, email, password, phone, dateOfBirth, address, locked, enabled);
     }
 
     @Override

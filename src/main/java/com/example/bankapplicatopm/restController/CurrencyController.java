@@ -2,16 +2,14 @@ package com.example.bankapplicatopm.restController;
 
 import com.example.bankapplicatopm.dto.currency.CurrencyChangeDTO;
 import com.example.bankapplicatopm.dto.currency.CurrencyDTO;
-import com.example.bankapplicatopm.model.CurrencyModel;
+import com.example.bankapplicatopm.model.CurrencyRate;
 import com.example.bankapplicatopm.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +20,7 @@ public class CurrencyController {
 
     @GetMapping("/api/currency/rate")
     public List<CurrencyDTO> getCurrencyRate() {
-        List<CurrencyModel> list = currencyService.getAllCurrency();
+        List<CurrencyRate> list = currencyService.getAllCurrency();
         List<CurrencyDTO> main = list.stream()
                 .map(t -> {
                     CurrencyDTO dto = new CurrencyDTO();

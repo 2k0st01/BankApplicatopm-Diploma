@@ -39,7 +39,7 @@
         let csrfToken = getCookie('XSRF-TOKEN');
 
         let csrfField = document.getElementById('csrfField');
-        csrfField.name = '_csrf';  // Замените '_csrf' на фактическое имя параметра, если оно динамическое
+        csrfField.name = '_csrf';
         csrfField.value = csrfToken;
     });
 </script>

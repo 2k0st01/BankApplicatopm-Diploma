@@ -21,7 +21,7 @@ public class JarService {
     private final WalletService walletService;
 
     @Transactional
-    public Long createJar(String jarName,BigDecimal maxSize, String currency, String comment){
+    public Long createJar(String jarName, BigDecimal maxSize, String currency, String comment) {
         BankAccount bankAccount = CurrentUser.getCurrentUser();
         Jar jar = new Jar();
 
@@ -38,7 +38,7 @@ public class JarService {
     }
 
     @Transactional
-    public boolean closeJar(Long jarId){
+    public boolean closeJar(Long jarId) {
         BankAccount bankAccount = CurrentUser.getCurrentUser();
         Jar jar = findJarById(jarId);
 
@@ -51,33 +51,20 @@ public class JarService {
         accountWallet.setSum(accountWallet.getSum().add(jar.getCurrentSum()));
 
         walletService.save(accountWallet);
-        transactionService.closeJar(bankAccount,jar,jar.getCurrentSum(),jar.getCurrency(),"From Jar:" + jar.getJarName());
+        transactionService.closeJar(bankAccount, jar, jar.getCurrentSum(), jar.getCurrency(), "From Jar:" + jar.getJarName());
         jarRepository.deleteById(jar.getId());
         return true;
     }
 
     @Transactional
-    public boolean transferMoney(Long jarId,BigDecimal sum,String jarCurrency,String comment){
+    public boolean transferMoney(Long jarId, BigDecimal sum, String jarCurrency, String comment) {
         BankAccount bankAccount = CurrentUser.getCurrentUser();
         Jar jar = findJarById(jarId);
-        if(!jar.isBankStatus()){
-            return false;
-        }
-
         Wallet fromWallet = walletService.findWalletByAccountIdAndCurrency(bankAccount.getId(), jarCurrency);
-        if(fromWallet == null){
+        if (!validation(jar, fromWallet, jarCurrency, sum)) {
             return false;
         }
-
-        if(!jar.getCurrency().equals(jarCurrency)){
-            return false;
-        }
-
-        if (fromWallet.getSum().compareTo(sum) < 0) {
-            return false;
-        }
-
-        transactionService.addJarTransaction(bankAccount,jar,sum,jarCurrency,comment,jar.getJarName());
+        transactionService.addJarTransaction(bankAccount, jar, sum, jarCurrency, comment, jar.getJarName());
 
         fromWallet.setSum(fromWallet.getSum().subtract(sum));
         jar.setCurrentSum(jar.getCurrentSum().add(sum));
@@ -85,7 +72,7 @@ public class JarService {
         walletService.save(fromWallet);
         jarRepository.save(jar);
 
-        if(jar.getCurrentSum().compareTo(jar.getMaxSize()) > 0){
+        if (jar.getCurrentSum().compareTo(jar.getMaxSize()) > 0) {
             jar.setBankStatus(false);
             jar.setComment("Jar was closed!!! Thank you for every one.");
             jarRepository.save(jar);
@@ -94,13 +81,42 @@ public class JarService {
         return true;
     }
 
-    public List<Transaction> getJarTransaction(Long id){
+    @Transactional
+    public List<Transaction> getJarTransaction(Long id) {
         return transactionService.getJarTransaction(id);
     }
 
+    public boolean checkUserValid(Long jarId){
+        BankAccount bankAccount = CurrentUser.getCurrentUser();
+        Jar jar = jarRepository.findJarById(jarId);
+        if(jar == null){
+            return false;
+        }
+        return jar.getBankAccount().getId().equals(bankAccount.getId());
+    }
+
+    public boolean validation(Jar jar, Wallet wallet, String currency, BigDecimal sum) {
+        if (!jar.isBankStatus()) {
+            throw new IllegalStateException("Jar already full, you can't add more money!");
+        }
+
+        if (wallet == null) {
+            throw new IllegalStateException("Wallet with currency: " + currency + ", not found!");
+        }
+
+        if (!jar.getCurrency().equals(currency)) {
+            throw new IllegalStateException("Wallet with currency: " + currency + ", not found!");
+        }
+
+        if (wallet.getSum().compareTo(sum) < 0) {
+            throw new IllegalStateException("In your wallet with currency: " + currency + ", you don't have this sum: " + sum + ".");
+        }
+
+        return true;
+    }
 
     @Transactional
-    public Jar findJarById(Long id){
+    public Jar findJarById(Long id) {
         return jarRepository.findJarById(id);
     }
 }

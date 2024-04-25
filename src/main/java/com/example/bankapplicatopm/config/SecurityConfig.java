@@ -49,6 +49,11 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .defaultSuccessUrl("/account", true)
                 .and()
+                    .logout()
+                        .permitAll()
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                .and()
                     .authenticationProvider(daoAuthenticationProvider());
 
         return http.build();

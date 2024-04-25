@@ -1,6 +1,5 @@
 package com.example.bankapplicatopm.dto.account;
 
-import com.example.bankapplicatopm.enums.AccountType;
 import com.example.bankapplicatopm.enums.UserRole;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,6 @@ public class AccountDTO {
     private String email;
     private LocalDate dateOfBirth;
     private String address;
-    private AccountType accountType;
     private UserRole userRole;
 
 }

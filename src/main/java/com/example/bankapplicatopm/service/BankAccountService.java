@@ -61,40 +61,28 @@ public class BankAccountService implements UserDetailsService {
     public String singUpUser(BankAccount bankAccount) {
         boolean userExists = bankAccountRepository.findUserAccountByEmail(bankAccount.getEmail()).isPresent();
         if (userExists) {
-            BankAccount account = bankAccountRepository.getUserAccountByEmail(bankAccount.getEmail());
-            if (!account.isEnabled()) {
-                EmailConfirmationToken emailConfirmationToken = emailConfirmationTokenService.findConfirmationTokenByUserAccount(account);
-                String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/registration/confirm?token=";
-                if (emailConfirmationToken == null) {
-                    String token = creatConfirmToken(account);
-                    emailSender.send(account.getEmail(), EmailBuilder.confirmYourEmail(account.getFirstName(), link + token));
-                    throw new IllegalStateException("User was not expired. We send new code on your Email address");
-                } else if (emailConfirmationToken.getConfirmedAt() == null) {
-                    emailSender.send(account.getEmail(), EmailBuilder.confirmYourEmail(account.getFirstName(), link + emailConfirmationToken.getToken()));
-                    throw new IllegalStateException("User was not expired. We re-send your code on your Email address");
-                }
-            }
-            throw new IllegalStateException("User already exist");
+            checkValidUser(bankAccount);
         }
+
         String encodePassword = bCryptPasswordEncoder.encode(bankAccount.getPassword());
         bankAccount.setPassword(encodePassword);
 
         bankAccountRepository.save(bankAccount);
         walletService.createBaseWallet(bankAccount, "UAH");
+
         bankAccount.setSpecialName("@user" + bankAccount.getId());
         bankAccount.setIBAN(IBANGenerated.generator(String.valueOf(bankAccount.getId())));
-        ;
         bankAccountRepository.save(bankAccount);
 
         return creatConfirmToken(bankAccount);
     }
 
     @Transactional
-    public BankAccount sendMoneyFromAdminPanel(TransactionDTO request){
+    public BankAccount sendMoneyFromAdminPanel(TransactionDTO request) {
         BankAccount bankAccount = findBankAccountByIBAN(request.getToAccount());
-        if(bankAccount != null){
-            for (Wallet w: bankAccount.getWallets()) {
-                if(w.getCurrency().equals(request.getCurrency())){
+        if (bankAccount != null) {
+            for (Wallet w : bankAccount.getWallets()) {
+                if (w.getCurrency().equals(request.getCurrency())) {
                     w.setSum(w.getSum().add(request.getSum()));
                 }
             }
@@ -103,9 +91,10 @@ public class BankAccountService implements UserDetailsService {
     }
 
     @Transactional
-    public boolean sendMoney(BigDecimal sum, String toAccountEmail, String fromAccountEmail, String currency){
+    public boolean sendMoney(BigDecimal sum, String toAccountEmail, String currency) {
         BankAccount fromAccount = CurrentUser.getCurrentUser();
         BankAccount toAccount = bankAccountRepository.findBankAccountByIBAN(toAccountEmail);
+
         Wallet fromWallet = walletService.findWalletByAccountIdAndCurrency(fromAccount.getId(), currency);
 
         if (fromWallet.getSum().compareTo(sum) < 0) {
@@ -156,11 +145,11 @@ public class BankAccountService implements UserDetailsService {
 
     @Transactional
     public void createTestUser() {
-        for(int i = 0; i <10; i++){
+        for (int i = 0; i < 10; i++) {
             BankAccount bankAccount = new BankAccount();
             String encodePassword = bCryptPasswordEncoder.encode("pass");
             bankAccount.setPassword(encodePassword);
-            bankAccount.setEmail("admin"+i+"@gmail.com");
+            bankAccount.setEmail("admin" + i + "@gmail.com");
             bankAccount.setUserRole(UserRole.ROLE_ADMIN);
             bankAccountRepository.save(bankAccount);
             walletService.createBaseWallet(bankAccount, "UAH");
@@ -173,7 +162,21 @@ public class BankAccountService implements UserDetailsService {
     }
 
     @Transactional
-    public void save(BankAccount account){
+    public void currentAccountToAdmin() {
+        BankAccount bankAccount = CurrentUser.getCurrentUser();
+        bankAccount.setUserRole(UserRole.ROLE_ADMIN);
+        bankAccountRepository.save(bankAccount);
+    }
+
+    @Transactional
+    public void currentAccountToUser() {
+        BankAccount bankAccount = CurrentUser.getCurrentUser();
+        bankAccount.setUserRole(UserRole.ROLE_USER);
+        bankAccountRepository.save(bankAccount);
+    }
+
+    @Transactional
+    public void save(BankAccount account) {
         bankAccountRepository.save(account);
     }
 
@@ -183,12 +186,12 @@ public class BankAccountService implements UserDetailsService {
     }
 
     @Transactional
-    public BankAccount findBankAccountById(Long id){
+    public BankAccount findBankAccountById(Long id) {
         return bankAccountRepository.findBankAccountById(id);
     }
 
     @Transactional
-    public List<BankAccount> getAllUsers(){
+    public List<BankAccount> getAllUsers() {
         return bankAccountRepository.findAll();
     }
 
@@ -222,6 +225,23 @@ public class BankAccountService implements UserDetailsService {
         );
         changePasswordRequestTokenService.save(changePasswordRequestToken);
         return token;
+    }
+
+    private void checkValidUser(BankAccount bankAccount){
+        BankAccount account = bankAccountRepository.getUserAccountByEmail(bankAccount.getEmail());
+        if (!account.isEnabled()) {
+            EmailConfirmationToken emailConfirmationToken = emailConfirmationTokenService.findConfirmationTokenByUserAccount(account);
+            String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/registration/confirm?token=";
+            if (emailConfirmationToken == null) {
+                String token = creatConfirmToken(account);
+                emailSender.send(account.getEmail(), EmailBuilder.confirmYourEmail(account.getFirstName(), link + token));
+                throw new IllegalStateException("User was not expired. We send new code on your Email address");
+            } else if (emailConfirmationToken.getConfirmedAt() == null) {
+                emailSender.send(account.getEmail(), EmailBuilder.confirmYourEmail(account.getFirstName(), link + emailConfirmationToken.getToken()));
+                throw new IllegalStateException("User was not expired. We re-send your code on your Email address");
+            }
+        }
+        throw new IllegalStateException("User already exist");
     }
 
     private String creatConfirmToken(BankAccount bankAccount) {

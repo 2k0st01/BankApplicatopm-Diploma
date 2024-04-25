@@ -1,7 +1,7 @@
 package com.example.bankapplicatopm.service;
 
 import com.example.bankapplicatopm.model.BankAccount;
-import com.example.bankapplicatopm.model.CurrencyModel;
+import com.example.bankapplicatopm.model.CurrencyRate;
 import com.example.bankapplicatopm.model.Wallet;
 import com.example.bankapplicatopm.repository.CurrencyRepository;
 import com.example.bankapplicatopm.util.CurrentUser;
@@ -20,17 +20,17 @@ public class CurrencyService {
     private final WalletService walletService;
 
     @Transactional
-    public void save(CurrencyModel currencyModel) {
-        currencyRepository.save(currencyModel);
+    public void save(CurrencyRate currencyRate) {
+        currencyRepository.save(currencyRate);
     }
 
     @Transactional
-    public CurrencyModel findCurrencyModelByCc(String cc) {
+    public CurrencyRate findCurrencyModelByCc(String cc) {
         return currencyRepository.findCurrencyModelByCc(cc);
     }
 
     @Transactional
-    public List<CurrencyModel> getAllCurrency() {
+    public List<CurrencyRate> getAllCurrency() {
         return currencyRepository.getAll();
     }
 
@@ -39,12 +39,12 @@ public class CurrencyService {
         if(from.equals(to)){
             throw new IllegalStateException("You true use same wallets: " + from);
         }
-
+        BigDecimal deductedAmount = interestDeduction(sum);
         BankAccount bankAccount = CurrentUser.getCurrentUser();
         Wallet walletFrom = walletService.findWalletByAccountIdAndCurrency(bankAccount.getId(), from);
         Wallet walletTo = walletService.findWalletByAccountIdAndCurrency(bankAccount.getId(), to);
-        CurrencyModel findFrom = currencyRepository.findCurrencyModelByCc(from);
-        CurrencyModel findTo = currencyRepository.findCurrencyModelByCc(to);
+        CurrencyRate findFrom = currencyRepository.findCurrencyModelByCc(from);
+        CurrencyRate findTo = currencyRepository.findCurrencyModelByCc(to);
 
         if (walletFrom == null) {
             throw new IllegalStateException("You don't have wallet: " + from);
@@ -63,18 +63,18 @@ public class CurrencyService {
             throw new IllegalStateException("Some think wrong");
         }
 
-        performTransaction(walletFrom,walletTo,findFrom,findTo,sum);
+        performTransaction(walletFrom,walletTo,findFrom,findTo,deductedAmount,sum);
     }
 
-    private void performTransaction(Wallet from, Wallet to, CurrencyModel currencyFrom, CurrencyModel currencyTo, BigDecimal amount) {
-        BigDecimal amountToTransfer = calculateAmount(currencyFrom, currencyTo, amount);
+    private void performTransaction(Wallet from, Wallet to, CurrencyRate currencyFrom, CurrencyRate currencyTo, BigDecimal deductedAmount , BigDecimal amount) {
+        BigDecimal amountToTransfer = calculateAmount(currencyFrom, currencyTo, deductedAmount);
         from.setSum(from.getSum().subtract(amount));
         to.setSum(to.getSum().add(amountToTransfer));
         walletService.save(from);
         walletService.save(to);
     }
 
-    private BigDecimal calculateAmount(CurrencyModel from, CurrencyModel to, BigDecimal amount) {
+    private BigDecimal calculateAmount(CurrencyRate from, CurrencyRate to, BigDecimal amount) {
         if (from == null && !to.getCc().equals("UAH")) {
             return amount.divide(to.getRate(), 2, RoundingMode.HALF_EVEN);
         } else if (to == null && !from.getCc().equals("UAH")) {
@@ -83,5 +83,13 @@ public class CurrencyService {
             BigDecimal amountToUAH = from.getRate().multiply(amount);
             return amountToUAH.divide(to.getRate(), 2, RoundingMode.HALF_EVEN);
         }
+    }
+
+    private BigDecimal interestDeduction(BigDecimal sum){
+        BigDecimal percent = new BigDecimal("2");
+        BigDecimal hundred = new BigDecimal("100");
+        BigDecimal percentDecimal = percent.divide(hundred);
+        BigDecimal amountToSubtract = sum.multiply(percentDecimal);
+        return sum.subtract(amountToSubtract);
     }
 }

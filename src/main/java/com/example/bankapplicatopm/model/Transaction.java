@@ -37,6 +37,10 @@ public class Transaction {
     private Jar jar;
 
     @ManyToMany
+    @JoinColumn(name = "card_id", referencedColumnName = "id")
+    private List<Card> card;
+
+    @ManyToMany
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private List<BankAccount> account;
 }

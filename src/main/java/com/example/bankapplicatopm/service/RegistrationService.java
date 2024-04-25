@@ -4,7 +4,6 @@ import com.example.bankapplicatopm.dto.account.RegistrationRequestUserApplicatio
 import com.example.bankapplicatopm.emailSender.EmailSender;
 import com.example.bankapplicatopm.model.BankAccount;
 import com.example.bankapplicatopm.model.token.EmailConfirmationToken;
-import com.example.bankapplicatopm.enums.AccountType;
 import com.example.bankapplicatopm.enums.UserRole;
 import com.example.bankapplicatopm.componet.validator.EmailValidator;
 import com.example.bankapplicatopm.componet.validator.PhoneValidator;
@@ -27,15 +26,14 @@ public class RegistrationService {
 
     @Transactional
     public BankAccount register(RegistrationRequestUserApplicationDTO request) {
-        boolean isValidEmail = emailValidator.test(request.getEmail());
-        boolean isValidPhone = phoneValidator.test(request.getPhone());
-        String mobilePhone = "+380" + request.getPhone();
-        if(!isValidEmail){
+        if(!emailValidator.test(request.getEmail())){
             throw new IllegalStateException("Email is not valid");
         }
-        if(!isValidPhone){
+        if(!phoneValidator.test(request.getPhone())){
             throw new IllegalStateException("Phone is not valid");
         }
+
+        String mobilePhone = "+380" + request.getPhone();
 
         BankAccount bankAccount;
         String token = bankAccountService.singUpUser(bankAccount = new BankAccount(
@@ -45,9 +43,9 @@ public class RegistrationService {
                 request.getPassword(),
                 mobilePhone,
                 request.getDateOfBirth(),
-                UserRole.ROLE_USER,
-                AccountType.STANDARD
+                UserRole.ROLE_USER
         ));
+
         String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/confirm?token=" + token;
         emailSender.send(request.getEmail(), EmailBuilder.confirmYourEmail(request.getFirstName(), link) );
         return bankAccount;

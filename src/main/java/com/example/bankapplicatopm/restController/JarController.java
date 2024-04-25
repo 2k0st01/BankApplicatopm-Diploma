@@ -24,6 +24,9 @@ public class JarController {
     @GetMapping("/jar/show/{id}")
     public InfoJarDTO getJarInformation(@PathVariable("id") long jarId){
         Jar jar = jarService.findJarById(jarId);
+        if(jar == null){
+            throw new IllegalStateException("Jar not correct");
+        }
         InfoJarDTO infoJarDTO = new InfoJarDTO();
         infoJarDTO.setJarName(jar.getJarName());
         infoJarDTO.setCurrency(jar.getCurrency());
@@ -47,6 +50,9 @@ public class JarController {
 
     @GetMapping("/jar/getTransaction/{id}")
     public List<JarTransactionDTO> getJarTransaction(@PathVariable("id") long jarId){
+        if(!jarService.checkUserValid(jarId)){
+            return null;
+        }
         List<Transaction> list = jarService.getJarTransaction(jarId);
         List<JarTransactionDTO> main = list.stream()
                 .map(t -> {

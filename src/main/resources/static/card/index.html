@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form id="createCard">
+  <h2>Create Card</h2>
+  <label for="currency">Select currency:</label>
+  <select id="currency" name="currency">
+    <option value="USD">USD - US Dollar</option>
+    <option value="EUR">EUR - Euro</option>
+    <option value="UAH">UAH - Ukrainian GRN</option>
+    <option value="GBP">GBP - British Pound</option>
+    <option value="AUD">AUD - Australian Dollar</option>
+    <option value="CAD">CAD - Canadian Dollar</option>
+    <option value="CHF">CHF - Swiss Franc</option>
+    <option value="CNY">CNY - Chinese Renminbi</option>
+    <option value="SEK">SEK - Swedish Krona</option>
+    <option value="NZD">NZD - New Zealand Dollar</option>
+  </select>
+  <input type="button" value="Create Card" onclick="submitCardData()">
+</form>
+
+<script>
+  function submitCardData() {
+    const csrfToken = document.cookie.replace(/(?:(?:^|.*;\s*)XSRF-TOKEN\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+    var currency = document.getElementById('currency').value;
+
+    fetch('/api/card/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain',
+        'X-XSRF-TOKEN': csrfToken
+      },
+      body: currency
+    }).then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }).then(data => {
+      console.log('Success:', data);
+      alert('Card created successfully!');
+    }).catch((error) => {
+      console.error('Error:', error);
+      alert('Error creating card.');
+    });
+  }
+</script>
+</body>
+</html>

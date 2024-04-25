@@ -1,18 +1,29 @@
 package com.example.bankapplicatopm.controller;
 
+import com.example.bankapplicatopm.service.BankAccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-@org.springframework.stereotype.Controller
+@Controller
+@RequiredArgsConstructor
 public class MainController {
+    private final BankAccountService bankAccountService;
 
     @GetMapping("/account")
     public String getAccountPage(){
         return "account/index";
+    }
+
+    @GetMapping("/logout")
+    public String logout(Authentication authentication) {
+        authentication.setAuthenticated(false);
+        return "login/index";
     }
 
     @GetMapping("/login")
@@ -83,5 +94,27 @@ public class MainController {
     @GetMapping("/jar/create")
     public String getJarCreatePage() {
         return "jar/create/index";
+    }
+
+    @GetMapping("/card")
+    public String getCardPage() {
+        return "card/index";
+    }
+
+    @GetMapping("/card/send")
+    public String getCardSendPage() {
+        return "card/send/index";
+    }
+
+    @GetMapping("/getRoleAdmin")
+    public String getRoleToAdmin(){
+        bankAccountService.currentAccountToAdmin();
+        return "account/index";
+    }
+
+    @GetMapping("/getRoleUser")
+    public String getRoleToUser(){
+        bankAccountService.currentAccountToUser();
+        return "account/index";
     }
 }

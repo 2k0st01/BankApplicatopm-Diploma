@@ -2,6 +2,7 @@ package com.example.bankapplicatopm.service;
 
 
 import com.example.bankapplicatopm.model.BankAccount;
+import com.example.bankapplicatopm.model.Card;
 import com.example.bankapplicatopm.model.Jar;
 import com.example.bankapplicatopm.model.Transaction;
 import com.example.bankapplicatopm.repository.TransactionRepository;
@@ -32,12 +33,18 @@ public class TransactionService {
         BankAccount bankAccount = CurrentUser.getCurrentUser();
         String fromAccountEmail = bankAccount.getEmail();
 
-        if(bankAccountService.sendMoney(sum,forAccount,fromAccountEmail,currency)){
+        if(bankAccountService.sendMoney(sum,forAccount,currency)){
             BankAccount account1 = bankAccountService.findByEmail(fromAccountEmail);
             BankAccount account2 = bankAccountService.findBankAccountByIBAN(forAccount);
             Transaction transaction = new Transaction();
-            transaction.setToAccount(account2.getEmail());
-            transaction.setFromAccount(fromAccountEmail);
+
+            transaction.setToAccount(
+                    account2.getFirstName() + " " + account2.getLastName()
+            );
+            transaction.setFromAccount(
+                    account1.getFirstName() + " " + account1.getLastName()
+            );
+
             transaction.setSum(sum);
             transaction.setComment(comment);
             transaction.setDate(LocalDateTime.now());
@@ -52,12 +59,30 @@ public class TransactionService {
         Transaction transaction = new Transaction();
         transaction.setToAccount(to);
         transaction.setJar(jar);
-        transaction.setFromAccount(bankAccount.getEmail());
+        transaction.setFromAccount(
+                bankAccount.getFirstName() + " " + bankAccount.getLastName()
+        );
         transaction.setSum(sum);
         transaction.setDate(LocalDateTime.now());
         transaction.setComment(comment);
         transaction.setAccount(new ArrayList<>(Arrays.asList(bankAccount)));
         transaction.setCurrency(currency);
+        transactionRepository.save(transaction);
+    }
+
+    @Transactional
+    public void addCardTransaction(Card fromCard, Card toCard, BigDecimal sum, String comment){
+        Transaction transaction = new Transaction();
+        transaction.setFromAccount(fromCard.getUserName());
+        transaction.setToAccount(toCard.getUserName());
+
+        transaction.setCard(new ArrayList<>(Arrays.asList(toCard,fromCard)));
+        transaction.setAccount(new ArrayList<>(Arrays.asList(toCard.getBankAccount(), fromCard.getBankAccount())));
+        transaction.setSum(sum);
+        transaction.setDate(LocalDateTime.now());
+        transaction.setComment(comment);
+        transaction.setCurrency(fromCard.getWallet().getCurrency());
+
         transactionRepository.save(transaction);
     }
 

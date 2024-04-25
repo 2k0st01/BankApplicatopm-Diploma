@@ -2,16 +2,20 @@ package com.example.bankapplicatopm.restController;
 
 import com.example.bankapplicatopm.dto.account.AccountDTO;
 import com.example.bankapplicatopm.model.BankAccount;
+import com.example.bankapplicatopm.service.BankAccountService;
 import com.example.bankapplicatopm.util.CurrentUser;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/account")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AccountController {
+    private final BankAccountService bankAccountService;
 
     @GetMapping("/data")
     public AccountDTO getAccountData(){
@@ -26,9 +30,30 @@ public class AccountController {
             accountDTO.setDateOfBirth(bankAccount.getDateOfBirth());
             accountDTO.setLastName(bankAccount.getLastName());
             accountDTO.setPhone(bankAccount.getPhone());
-            accountDTO.setAccountType(bankAccount.getAccountType());
             accountDTO.setUserRole(bankAccount.getUserRole());
         }
         return accountDTO;
     }
+
+
+//    @PostMapping()
+//    public void changePassword(){
+//
+//    }
+//
+//    @PostMapping()
+//    public void changeAddress(){
+//
+//    }
+//
+//    @PostMapping()
+//    public void changeSpecialName(){
+//
+//    }
+//
+//    @PostMapping()
+//    public void changePhoneNumber(){
+//
+//    }
+
 }

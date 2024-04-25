@@ -2,7 +2,7 @@ package com.example.bankapplicatopm.componet.GetRate;
 
 import com.example.bankapplicatopm.dto.currency.CurrencyDTO;
 import com.example.bankapplicatopm.enums.Currency;
-import com.example.bankapplicatopm.model.CurrencyModel;
+import com.example.bankapplicatopm.model.CurrencyRate;
 import com.example.bankapplicatopm.service.CurrencyService;
 import lombok.AllArgsConstructor;
 import org.json.JSONArray;
@@ -27,15 +27,15 @@ public class RateGetter {
                 for(CurrencyDTO cd: response){
                     if(cd.getCc().equals(c.toString())){
 
-                        CurrencyModel currencyModel = currencyService.findCurrencyModelByCc(cd.getCc());
-                        if(currencyModel == null){
-                            currencyModel = new CurrencyModel();
-                            currencyModel.setRate(cd.getRate());
-                            currencyModel.setCc(cd.getCc());
-                            currencyService.save(currencyModel);
+                        CurrencyRate currencyRate = currencyService.findCurrencyModelByCc(cd.getCc());
+                        if(currencyRate == null){
+                            currencyRate = new CurrencyRate();
+                            currencyRate.setRate(cd.getRate());
+                            currencyRate.setCc(cd.getCc());
+                            currencyService.save(currencyRate);
                         } else {
-                            currencyModel.setRate(cd.getRate());
-                            currencyService.save(currencyModel);
+                            currencyRate.setRate(cd.getRate());
+                            currencyService.save(currencyRate);
                         }
 
                     }
