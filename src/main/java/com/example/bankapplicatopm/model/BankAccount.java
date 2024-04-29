@@ -48,7 +48,7 @@ public class BankAccount implements UserDetails {
     private Boolean enabled = false;
 //    private Boolean phoneValid = false;
 //    private boolean mFaEnabled = false;
-//    private String secret;
+    private String secret;
 
 
     @OneToMany(mappedBy = "account")
@@ -119,4 +119,5 @@ public class BankAccount implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
 }
