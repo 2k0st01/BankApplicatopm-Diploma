@@ -10,6 +10,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 
 @Configuration
@@ -31,8 +36,10 @@ public class SecurityConfig {
         http
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .csrf().disable()
-                .cors().disable()
+//                .cors().disable()
                 .authorizeHttpRequests()
                     .antMatchers("/registration/**",
                             "/login",
@@ -40,8 +47,7 @@ public class SecurityConfig {
                             "/forgot-password",
                             "/change-password",
                             "/",
-                            "/api/currency/rate",
-                            "/test"
+                            "/api/currency/rate"
                     ).permitAll()
                     .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
                     .antMatchers("/panel", "/panel/getUsers").hasRole("ADMIN")
@@ -60,6 +66,18 @@ public class SecurityConfig {
                     .authenticationProvider(daoAuthenticationProvider());
 
         return http.build();
+    }
+
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("*")); // or use "*" for all
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 
