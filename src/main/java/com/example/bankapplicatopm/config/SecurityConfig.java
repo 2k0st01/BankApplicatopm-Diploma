@@ -32,6 +32,7 @@ public class SecurityConfig {
 //                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
                 .csrf().disable()
+                .cors().disable()
                 .authorizeHttpRequests()
                     .antMatchers("/registration/**",
                             "/login",
