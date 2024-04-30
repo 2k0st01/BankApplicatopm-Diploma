@@ -28,9 +28,9 @@ public class MainController {
 
     @GetMapping("/login")
     public String getLoginPage(Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            return "redirect:/account";
-        }
+//        if (authentication != null && authentication.isAuthenticated()) {
+//            return "redirect:/account";
+//        }
         return "login/index";
     }
 
