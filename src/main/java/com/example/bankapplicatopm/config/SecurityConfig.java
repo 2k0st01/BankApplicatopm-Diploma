@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .and()
                     .formLogin()
                         .loginPage("/login")
-                        .defaultSuccessUrl("https://kosto-app-bank-53a05f6291cb.herokuapp.com/account", true)
+                        .defaultSuccessUrl("/account", true)
                 .and()
                     .logout()
                         .permitAll()
