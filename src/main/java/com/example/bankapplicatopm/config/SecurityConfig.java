@@ -40,7 +40,8 @@ public class SecurityConfig {
                             "/forgot-password",
                             "/change-password",
                             "/",
-                            "/api/currency/rate"
+                            "/api/currency/rate",
+                            "/test"
                     ).permitAll()
                     .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
                     .antMatchers("/panel", "/panel/getUsers").hasRole("ADMIN")
