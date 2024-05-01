@@ -35,11 +35,6 @@ public class AccountController {
         return accountDTO;
     }
 
-    @GetMapping("/test")
-    public String test(){
-        return "Okey";
-    }
-
 
 //    @PostMapping()
 //    public void changePassword(){
