@@ -36,12 +36,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //                .and()
-                .and()
                 .cors().configurationSource(corsConfigurationSource())
                 .and()
-//                .csrf().disable()
+                .csrf().disable()
 //                .cors().disable()
                 .authorizeHttpRequests()
                     .antMatchers("/registration/**",
@@ -67,8 +66,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login?logout")
                 .and()
                     .authenticationProvider(daoAuthenticationProvider())
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);;
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
     }
