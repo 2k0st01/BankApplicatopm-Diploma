@@ -1,5 +1,7 @@
 package com.example.bankapplicatopm.service;
 
+import com.example.bankapplicatopm.componet.AuthenticationResponse;
+import com.example.bankapplicatopm.dto.account.AuthRequest;
 import com.example.bankapplicatopm.dto.account.RegistrationRequestUserApplicationDTO;
 import com.example.bankapplicatopm.emailSender.EmailSender;
 import com.example.bankapplicatopm.model.BankAccount;
@@ -9,6 +11,8 @@ import com.example.bankapplicatopm.componet.validator.EmailValidator;
 import com.example.bankapplicatopm.componet.validator.PhoneValidator;
 import com.example.bankapplicatopm.util.EmailBuilder;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +26,12 @@ public class RegistrationService {
     private final BankAccountService bankAccountService;
     private final EmailConfirmationTokenService emailConfirmationTokenService;
     private final EmailSender emailSender;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
 
     @Transactional
-    public BankAccount register(RegistrationRequestUserApplicationDTO request) {
+    public AuthenticationResponse register(RegistrationRequestUserApplicationDTO request) {
         if(!emailValidator.test(request.getEmail())){
             throw new IllegalStateException("Email is not valid");
         }
@@ -48,7 +54,10 @@ public class RegistrationService {
 
         String link = "https://kosto-app-bank-53a05f6291cb.herokuapp.com/confirm?token=" + token;
         emailSender.send(request.getEmail(), EmailBuilder.confirmYourEmail(request.getFirstName(), link) );
-        return bankAccount;
+        var jwtToken = jwtService.generateToken(bankAccount);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 
     @Transactional
@@ -75,5 +84,19 @@ public class RegistrationService {
     }
 
 
+    public AuthenticationResponse auth(AuthRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
+        var bankAccount = bankAccountService.findUserAccountByEmail(request.getUsername())
+                .orElseThrow();
 
+        var jwtToken = jwtService.generateToken(bankAccount);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
 }

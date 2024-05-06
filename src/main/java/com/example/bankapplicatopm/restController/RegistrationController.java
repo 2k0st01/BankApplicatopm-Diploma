@@ -15,15 +15,15 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse> register(@RequestBody RegistrationRequestUserApplicationDTO request){
-        try {
-            BankAccount user = registrationService.register(request);
-            return ResponseEntity.ok(new ApiResponse(true, "Registration successful", user));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ApiResponse(false, "Registration failed: " + e.getMessage()));
-        }
-    }
+//    @PostMapping
+//    public ResponseEntity<ApiResponse> register(@RequestBody RegistrationRequestUserApplicationDTO request){
+//        try {
+//            BankAccount user = registrationService.register(request);
+//            return ResponseEntity.ok(new ApiResponse(true, "Registration successful", user));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(new ApiResponse(false, "Registration failed: " + e.getMessage()));
+//        }
+//    }
 
     @GetMapping(path = "/confirm")
     public String confirm(@RequestParam("token") String token){
