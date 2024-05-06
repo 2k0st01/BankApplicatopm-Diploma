@@ -65,8 +65,8 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                 .and()
-                    .authenticationProvider(daoAuthenticationProvider())
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                    .authenticationProvider(daoAuthenticationProvider());
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         return http.build();
     }
